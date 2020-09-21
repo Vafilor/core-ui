@@ -15,15 +15,12 @@ text {
 }
 
 app-node-info {
-  width: 420px;
-  position: absolute;
+  position: fixed;
+  width: 60vw;
   right: 0;
   top: 0;
-
-  /deep/ .root-element {
-    height: 100%;
-    overflow: scroll;
-  }
+  height: 100vh;
+  background-color: white;
 }
 
 app-logs {

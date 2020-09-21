@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { NodeStatus } from '../node/node.service';
-import { SimpleWorkflowDetail, WorkflowPhase, WorkflowService, } from "../workflow/workflow.service";
+import { SimpleWorkflowDetail, WorkflowPhase, WorkflowService, } from '../workflow/workflow.service';
 import * as yaml from 'js-yaml';
-import { TemplateDefinition } from "../workflow-template/workflow-template.service";
-import { FileNavigator, LongRunningTaskState, SlowValueUpdate } from "../files/fileNavigator";
-import { ModelFile, WorkflowServiceService } from "../../api";
-import { Metric, MetricsService } from "./metrics/metrics.service";
+import { TemplateDefinition } from '../workflow-template/workflow-template.service';
+import { FileNavigator } from '../files/fileNavigator';
+import { ModelFile, WorkflowServiceService } from '../../api';
+import { Metric, MetricsService } from './metrics/metrics.service';
 
 @Component({
   selector: 'app-node-info',
@@ -31,7 +31,7 @@ export class NodeInfoComponent implements OnInit, OnDestroy {
   finishedAt = null;
   status: WorkflowPhase;
   message: string;
-  logsAvailable: boolean = false;
+  logsAvailable = false;
   statusClass = {};
   inputParameters = [];
   outputParameters = [];
@@ -58,7 +58,7 @@ export class NodeInfoComponent implements OnInit, OnDestroy {
   }
 
   updateNodeStatus(node: NodeStatus) {
-    if(!node) {
+    if (!node) {
       return;
     }
 
@@ -72,14 +72,14 @@ export class NodeInfoComponent implements OnInit, OnDestroy {
 
     const skipped = node.phase === 'Skipped';
 
-    if(!skipped) {
+    if (!skipped) {
       if (node.startedAt) {
         this.startedAt = new Date(node.startedAt);
       } else {
         this.startedAt = node.startedAt;
       }
 
-      if(node.finishedAt) {
+      if (node.finishedAt) {
         this.finishedAt = new Date(node.finishedAt);
       } else {
         // Error phase has no finished date
@@ -108,7 +108,7 @@ export class NodeInfoComponent implements OnInit, OnDestroy {
     try {
       const manifest = this.workflow.manifest;
       loaded = yaml.safeLoad(manifest);
-      for (let template of loaded.spec.templates) {
+      for (const template of loaded.spec.templates) {
         if (template.name === node.templateName) {
           this.template = template;
         }
@@ -121,11 +121,10 @@ export class NodeInfoComponent implements OnInit, OnDestroy {
       && node.templateName === loaded.spec.entrypoint
       && loaded && loaded.spec.arguments.parameters) {
       this.inputParameters = loaded.spec.arguments.parameters;
-    } else if (node.type == 'Pod' && node.inputs) {
+    } else if (node.type === 'Pod' && node.inputs) {
       this.inputParameters = node.inputs.parameters;
       this.inputArtifacts = node.inputs.artifacts;
     }
-
 
     if (node.type !== 'DAG' && node.type !== 'Steps' && node.outputs) {
       this.outputParameters = node.outputs.parameters;
@@ -161,11 +160,11 @@ export class NodeInfoComponent implements OnInit, OnDestroy {
   }
 
   updateFiles() {
-    if(this.updatedToSameNode() && !this.transitionedToFinishedNode()) {
+    if (this.updatedToSameNode() && !this.transitionedToFinishedNode()) {
       return;
     }
 
-    if(this.fileNavigator) {
+    if (this.fileNavigator) {
       this.fileNavigator.cleanUp();
     }
 
@@ -186,7 +185,7 @@ export class NodeInfoComponent implements OnInit, OnDestroy {
   }
 
   updateMetrics() {
-    if(this.updatedToSameNode() && !this.transitionedToFinishedNode()) {
+    if (this.updatedToSameNode() && !this.transitionedToFinishedNode()) {
       return;
     }
 
